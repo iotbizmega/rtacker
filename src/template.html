@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>سامانه رهگیری و مدیریت ناوگان</title><link rel="icon" href="__LOGO96__"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+:root{--nav:#0b1d3a;--t:#0fa89a;--bg:#f1f4f8;--c:#fff;--l:#dfe6ee;--x:#1d2b3a;--m:#7b8a99;--ok:#1fa25a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f161d;--c:#172230;--l:#263444;--x:#e6edf4;--m:#8b9bab}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--x);font:13px/1.5 Tahoma,Arial,sans-serif;display:flex;flex-direction:column}
+button{font:inherit;cursor:pointer}
+#login{flex:1;display:flex}
+#login .hero{flex:1.3;background:linear-gradient(135deg,#e8832a,#f6b25a 55%,#c4621a);color:#fff;display:flex;align-items:flex-end;padding:40px;font-size:28px;font-weight:700}
+#login form{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:0 9%;max-width:520px}
+#login input{padding:11px;border:1px solid var(--l);border-radius:4px;background:var(--c);color:var(--x)}
+.btn{background:var(--t);color:#fff;border:0;border-radius:4px;padding:9px 18px}
+#app{display:none;flex:1;flex-direction:column;min-height:0}
+header{background:var(--nav);color:#fff;display:flex;align-items:center;height:52px;padding:0 12px;gap:4px;flex:none}
+.lg{font-weight:700;margin-inline-end:16px;white-space:nowrap}
+nav{display:flex;height:100%}
+.ni{position:relative;height:100%}
+.ni>button{height:100%;background:0;border:0;color:#cfd8e3;padding:0 14px;white-space:nowrap}
+.ni.on>button{background:var(--t);color:#fff}
+.dd{display:none;position:absolute;top:52px;inset-inline-start:0;background:var(--nav);min-width:230px;z-index:3000;padding:6px 0;border-radius:0 0 6px 6px;max-height:70vh;overflow:auto}
+.ni.open .dd{display:block}
+.dd div{padding:8px 16px;color:#dbe4ee;cursor:pointer}.dd div:hover{background:#17305a}
+.sp{flex:1}.gear{background:0;border:0;color:#fff;font-size:18px}
+main{flex:1;min-height:0;padding:8px;display:flex;gap:8px;overflow:auto}
+.card{background:var(--c);border:1px solid var(--l);border-radius:4px}
+.tree{width:270px;flex:none;padding:8px;overflow:auto}
+.s{border:1px solid var(--l);border-radius:4px;padding:6px 10px;color:var(--m);margin-bottom:8px}
+.r{display:flex;align-items:center;gap:8px;padding:6px 4px}.r.a{background:#e3f4f2;color:#12332f;border-radius:3px}
+.i1{padding-inline-start:16px}.i2{padding-inline-start:32px}
+.d{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}.d.g{background:#9aa5b1}
+.ic{margin-inline-start:auto;display:flex;gap:4px}.ic button{border:1px solid var(--l);background:var(--c);color:var(--t);border-radius:3px;padding:1px 5px}
+.col{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ctl{padding:8px;display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.ctl label{display:block;font-size:11px;color:var(--m)}.f{border:1px solid var(--l);border-radius:4px;padding:5px 10px;min-width:100px;background:var(--bg)}
+.stop{background:#f4a62a;color:#fff;border:0;border-radius:4px;padding:8px 22px;margin-inline-start:auto}
+.wall{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px}
+.t{border:2px solid transparent;border-radius:3px;overflow:hidden;background:var(--c)}.t.red{border-color:#e03131}
+.t img,.t .nv{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.nv{background:#33383d;color:#cbd2d9;display:flex;align-items:center;justify-content:center}
+.t p{margin:0;padding:3px 8px;font-weight:700;display:flex;justify-content:space-between}
+.map{flex:1;position:relative;overflow:hidden;min-height:260px}
+.q{position:absolute;top:8px;inset-inline-start:8px;background:#fff;color:#7b8a99;border:1px solid #dfe6ee;border-radius:4px;padding:6px 12px;width:min(240px,calc(100% - 90px))}.zm{position:absolute;bottom:12px;inset-inline-end:10px;display:flex;flex-direction:column;gap:2px}.zm button{width:30px;height:30px;background:#fff;border:1px solid #dfe6ee;border-radius:3px;font-size:18px}
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--l);padding:0 12px}
+.tabs span{padding:9px 2px;color:var(--m)}.tabs .on{color:var(--t);border-bottom:2px solid var(--t)}
+table{width:100%;border-collapse:collapse}th{background:var(--bg);color:var(--m);font-weight:400;text-align:start;padding:8px}td{padding:8px;border-bottom:1px solid var(--l)}
+.pg{flex:1;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pg h2{margin:0;font-size:16px}.bar{display:flex;gap:8px}.bar .f{flex:1;max-width:260px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.cards .t p{font-weight:400}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.k{color:#fff;padding:16px;border-radius:4px;font-size:30px;font-weight:700}.k small{display:block;font-size:13px;font-weight:400}
+.g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.g .card{padding:14px;min-height:130px}
+.hb{height:14px;border-radius:2px;margin:9px 0}
+#md{display:none;position:fixed;inset:0;background:#0007;z-index:4000;align-items:center;justify-content:center}
+#md .card{padding:16px;width:min(520px,92%)}#md .chip{display:inline-block;background:var(--bg);border:1px solid var(--l);border-radius:4px;padding:5px 10px;margin:3px}
+.bc{color:var(--m);font-size:12px}.chip{padding:2px 10px;border-radius:10px;font-size:12px;background:#e8edf2}.chip.ok{background:#d9f3e4;color:#16723f}.chip.bad{background:#fde0e0;color:#b42323}.chip.wn{background:#fdf0d2;color:#9a6200}.ft{padding:8px 12px;color:var(--m);font-size:12px}.kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.kc{padding:12px}.kc small{display:block;color:var(--m)}.kc b{font-size:18px}.tl{position:relative;height:18px;background:var(--bg);border-radius:3px;margin-top:8px}.tl i{position:absolute;top:0;bottom:0;background:var(--t);opacity:.7;border-radius:3px}.fr{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--l)}.lm{position:absolute;inset:0;z-index:0}.q{z-index:5}.mn{position:absolute;bottom:40px;inset-inline:20%;background:#fff;border:1px solid #e03131;color:#b42323;padding:8px;border-radius:4px;z-index:600;text-align:center}.vm{background:#1fa25a;color:#fff;border:2px solid #fff;border-radius:4px;font-weight:700;text-align:center;line-height:18px;width:44px;height:22px;box-shadow:0 1px 4px #0006}.vm.off{background:#8a96a3}.dd .cs{background:#17305a;color:#5ee0d2}.t img{cursor:zoom-in}#lb{display:none;position:fixed;inset:0;background:#000d;z-index:5000;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;cursor:zoom-out}#lb img{max-width:92vw;max-height:80vh;border-radius:4px}#lbc{font-size:16px;font-weight:700}.ac button{border:1px solid var(--l);background:var(--c);color:var(--m);border-radius:3px;margin-inline-end:4px;padding:1px 6px}.ft{display:flex;justify-content:space-between;align-items:center}.pgn b{display:inline-block;min-width:24px;text-align:center;border:1px solid var(--l);border-radius:3px;margin-inline-start:4px;font-weight:400}.pgn .on{background:var(--t);color:#fff;border-color:var(--t)}.hmb{display:none;background:0;border:0;color:#fff;font-size:22px}html{-webkit-text-size-adjust:100%}@media(max-width:900px){
+.hmb{display:block}.lg,.un{display:none}header{padding:0 8px;gap:2px}#sw .s{width:130px!important}
+nav{display:none;position:fixed;top:52px;inset-inline:0;background:var(--nav);flex-direction:column;height:auto;max-height:calc(100% - 52px);overflow:auto;z-index:3000}
+body.nv nav{display:flex}.ni{height:auto}.ni>button{width:100%;text-align:start;padding:13px 16px;height:auto}
+nav .dd{position:static;border-radius:0;background:#0f2548;max-height:none}
+main{flex-direction:column;overflow:auto;padding:6px}main>*{flex:none}
+.tree{width:100%;max-height:220px}.map{min-height:320px}.wall{grid-template-columns:repeat(2,1fr)}
+.sd{flex-direction:column!important;min-height:0!important}.sd>*{width:100%!important}.sd .map{flex:none!important;height:320px}
+.card{overflow-x:auto}table{min-width:560px}.tabs{overflow-x:auto;white-space:nowrap}.ctl{gap:6px}
+.kp{grid-template-columns:repeat(2,1fr)}.g{grid-template-columns:1fr}.g .card{grid-column:auto!important}
+.cards{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.ic button{padding:4px 9px}
+#login .hero{display:none}#login form{max-width:none;padding:0 6%}.pg{padding:8px}}
+@media(max-width:480px){.wall{gap:2px}.stop{margin-inline-start:0}.f{min-width:80px}}.ct{background:#fff9;border:0;box-shadow:none;font-weight:700;font-size:12px;padding:0 3px;color:#222}.ct:before{display:none}#app,main,.col,.pg{min-width:0;max-width:100%}body{overflow-x:hidden}</style></head><body>
+<section id="login">
+  <div class="hero"><div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start"><img src="__LOGO256__" alt="لوگو" style="width:132px;height:132px;border-radius:50%;box-shadow:0 6px 24px #0004"><div>به سامانه رهگیری و مدیریت ناوگان خوش آمدید</div><a href="https://www.iotbiz.ir" target="_blank" rel="noopener" style="font-size:15px;font-weight:400;color:#fff;opacity:.92;text-decoration:none">مرکز گسترش اینترنت اشیا ایران · iotbiz.ir</a></div></div>
+  <form onsubmit="enter();return false"><h2>ورود به سامانه</h2>
+    <input placeholder="نام کاربری"><input type="password" placeholder="رمز عبور">
+    <label><input type="checkbox"> مرا به خاطر بسپار</label>
+    <button class="btn" onclick="enter()">ورود</button></form>
+</section>
+<div id="app">
+  <header><button class="hmb" onclick="document.body.classList.toggle('nv')">☰</button><div class="lg" onclick="abt()" title="درباره سامانه" style="cursor:pointer;display:flex;align-items:center;gap:8px"><img src="__LOGO96__" alt="لوگو" style="width:34px;height:34px;border-radius:50%;background:#fff"><span>سامانه رهگیری و مدیریت ناوگان</span></div><nav id="nav"></nav><div class="sp"></div>
+    <div id="sw" style="position:relative"><input id="ms" class="s" style="margin:0;background:#fff;width:210px" placeholder="جستجوی منو..." oninput="msr(this.value)"><div id="mr" class="dd" style="top:38px"></div></div>
+    <button class="gear" onclick="md.style.display='flex'" title="مرتب‌سازی منوها">⚙</button><span class="un">کاربر سیستم</span><button class="gear" style="font-size:13px;margin-inline-start:8px" onclick="logout()">خروج</button></header>
+  <main id="mn"></main>
+</div>
+<div id="lb"><img id="lbi"><div id="lbc"></div><small>برای بستن کلیک کنید</small></div><div id="md" onclick="this.style.display='none'"><div class="card" onclick="event.stopPropagation()"><h3>مرتب‌سازی موقعیت منوها</h3><p style="color:var(--m)">با کشیدن و رها کردن، ترتیب نمایش منوها را تنظیم کنید.</p><div id="chips"></div><button class="btn" onclick="md.style.display='none'">بستن</button></div></div>
+<script>
+const IM=__IMS__;
+const OPS=['ناوگان','خودرو','نقش','کاربر','راننده','پیوند هشدار','هشدار مجازی','دانلود زمان‌بندی‌شده','محدوده جغرافیایی','نشست مأموریت','قوانین آنالوگ','قوانین جریان ویدئو','قوانین ارسال زمان‌بندی‌شده گزارش','مدیریت فایل‌های صوتی','نگهداری خودرو'];
+const NAV=[['پیشگیری',['تنظیمات پیشگیری']],['پایش لحظه‌ای',['موقعیت لحظه‌ای','پایش ویدئو']],['مستندات / شواهد',['کلیپ‌های هشدار','ویدئوی تاریخی','مسیر','سفر']],['عملیات',OPS],['نگهداری',['تنظیمات نگهداری']],['گزارش‌ها',['گزارش GPS','سوابق GPS','گزارش هشدار عادی','سوابق هشدار','توزیع هشدار']],['داشبورد',['نمای کلی']]];
+const V=[['102','شرکت حمل‌ونقل آرمان','۱۴۰۴/۰۶/۲۵ ۱۳:۴۵:۲۱','روشن','4G',1],['106','ناوگان آزمایشی','۱۴۰۴/۰۶/۲۵ ۱۳:۴۲:۱۰','خاموش','4G',1],['108','ناوگان مرکزی','۱۴۰۴/۰۶/۲۵ ۱۳:۳۵:۰۵','خاموش','3G',0]];
+let cur=['پایش لحظه‌ای','موقعیت لحظه‌ای'];
+function enter(){login.style.display='none';app.style.display='flex';go(...cur)}
+function navr(){nav.innerHTML=NAV.map((n,i)=>`<div class="ni ${n[0]==cur[0]?'on':''}" id="ni${i}"><button onclick="tg(${i})">${n[0]}</button><div class="dd">${n[1].map(s=>`<div class="${s==cur[1]?'cs':''}" onclick="go('${n[0]}','${s}')">${s}</div>`).join('')}</div></div>`).join('')}
+function tg(i){const o=document.getElementById('ni'+i).classList.contains('open');document.querySelectorAll('.ni').forEach(e=>e.classList.remove('open'));if(!o)document.getElementById('ni'+i).classList.add('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.ni'))document.querySelectorAll('.ni').forEach(x=>x.classList.remove('open'))});
+
+const P=(o,a)=>[+((o-48.3)*162).toFixed(1),+((37.6-a)*200).toFixed(1)];
+const pts=a=>a.map(([o,a2])=>P(o,a2).join(',')).join(' ');
+const COAST=[[48.87,38.4],[49.47,37.47],[50.0,37.4],[50.65,36.92],[51.42,36.65],[52.0,36.62],[52.65,36.72],[53.55,36.92],[54.0,36.95]];
+const CITY=[['تهران',51.39,35.69],['کرج',51.0,35.83],['قزوین',50.0,36.27],['قم',50.88,34.64],['ساوه',50.35,35.02],['ورامین',51.65,35.32],['چالوس',51.42,36.65],['آمل',52.35,36.47],['ساری',53.06,36.56],['رشت',49.59,37.28],['همدان',48.52,34.8],['اراک',49.69,34.09],['سمنان',53.39,35.58],['کاشان',51.44,33.98],['فیروزکوه',52.77,35.75]];
+const ROAD=[[[51.39,35.69],[51.0,35.83],[50.5,36.05],[50.0,36.27],[49.59,37.28]],[[51.39,35.69],[51.1,35.2],[50.88,34.64]],[[50.88,34.64],[50.35,35.02],[50.0,35.4],[51.0,35.83]],[[51.39,35.69],[51.65,35.32]],[[51.0,35.83],[51.2,36.3],[51.42,36.65]],[[51.39,35.69],[51.9,36.05],[52.35,36.47],[53.06,36.56]],[[51.39,35.69],[52.1,35.75],[53.39,35.58]],[[50.88,34.64],[51.44,33.98]],[[50.35,35.02],[49.69,34.09]],[[50.0,36.27],[49.0,35.6],[48.52,34.8]]];
+const VEH=[['102',51.39,35.69,1],['106',50.5,36.05,1],['108',50.88,34.64,0]];
+function MAPS(ex=''){
+const sea=pts([[48.3,38.9],...COAST,[54,38.9]]);
+const fo=pts([...COAST.slice(2).map(([o,a])=>[o,a-0.28]),[54,36.67],[54,36.95],...COAST.slice(2).reverse()]);
+return `<svg viewBox="0 0 923 800" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;font-family:Tahoma,Arial,sans-serif"><rect width="923" height="800" fill="#efe9d6"/>
+<polygon points="${pts([[49.4,37.0],[50.5,36.7],[52,36.4],[53.5,36.4],[54,36.2],[54,35.5],[52.5,35.9],[51.2,36.0],[50,36.1]])}" fill="#d7d3bd"/>
+<polygon points="${fo}" fill="#c9deb7"/>
+<polygon points="${sea}" fill="#a9d3ee"/><polyline points="${pts(COAST)}" fill="none" stroke="#6fa8cf" stroke-width="2"/>
+${ROAD.map(r=>`<polyline points="${pts(r)}" fill="none" stroke="#fff" stroke-width="5.5" stroke-linejoin="round"/><polyline points="${pts(r)}" fill="none" stroke="#f2a93b" stroke-width="2.6" stroke-linejoin="round"/>`).join('')}
+<text x="300" y="40" fill="#3b7fae" font-size="22" font-style="italic" text-anchor="middle">دریای خزر</text>
+${CITY.map(([n,o,a])=>{const [x,y]=P(o,a),b=n=='تهران';return `<circle cx="${x}" cy="${y}" r="${b?7:4.5}" fill="#555" stroke="#fff" stroke-width="2"/><text x="${x}" y="${y-(b?13:9)}" text-anchor="middle" font-size="${b?18:14}" font-weight="${b?700:400}" fill="#222" stroke="#fff" stroke-width="4" paint-order="stroke">${n}</text>`}).join('')}
+${VEH.map(([n,o,a,on])=>{const [x,y]=P(o,a);return `<g transform="translate(${x+14},${y+4})"><rect width="44" height="22" rx="4" fill="${on?'#1fa25a':'#8a96a3'}" stroke="#fff" stroke-width="2"/><text x="22" y="16" fill="#fff" font-size="13" font-weight="700" text-anchor="middle">${n}</text></g>`}).join('')}
+${ex}<line x1="20" y1="770" x2="110" y2="770" stroke="#333" stroke-width="3"/><text x="65" y="758" font-size="13" fill="#333" text-anchor="middle" stroke="#fff" stroke-width="3" paint-order="stroke">۵۰ کیلومتر</text></svg>
+<div class="q">جستجوی آدرس مورد نظر را وارد کنید...</div><div class="zm"><button>+</button><button>−</button></div>`}
+
+const OKr=/^(فعال|آنلاین|انجام‌شده|موفق|عادی|تأییدشده)$/,BDr=/^(غیرفعال|آفلاین|ناموفق|بحرانی)$/,WNr=/^(معوق|مهم|در حال انجام|نزدیک موعد)$/;
+const cell=c=>OKr.test(c)?`<span class="chip ok">${c}</span>`:BDr.test(c)?`<span class="chip bad">${c}</span>`:WNr.test(c)?`<span class="chip wn">${c}</span>`:c;
+const hd=s=>`<div class="bc">${cur[0]} › ${s}</div><h2>${s}</h2>`;
+const fl=(f,b)=>`<div class="card ctl">${(f||['جستجو']).map(x=>`<div><label>${x}</label><div class="f">${/زمان|تاریخ/.test(x)?'۱۴۰۴/۰۶/۲۵':'همه'}</div></div>`).join('')}<button class="btn">جستجو</button><span style="margin-inline-start:auto;display:flex;gap:6px">${(b||['+ افزودن','خروجی اکسل']).map(x=>`<button class="btn" style="background:${x[0]=='+'?'var(--t)':'var(--nav)'}">${x}</button>`).join('')}</span></div>`;
+const K=k=>k?`<div class="kg">${k.map(x=>`<div class="card kc"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('')}</div>`:'';
+const TB=(c,r,a)=>{const R=r.split('\n').map(x=>x.split('|'));return `<div class="card"><table><tr>${c.map(x=>`<th>${x}</th>`).join('')}${a===0?'':'<th></th>'}</tr>${R.map(x=>`<tr>${x.map(y=>`<td>${cell(y)}</td>`).join('')}${a===0?'':'<td class="ac"><button title="ویرایش">✎</button><button title="حذف">🗑</button></td>'}</tr>`).join('')}</table><div class="ft"><span>نمایش ۱ تا ${R.length} از ${R.length} مورد</span><span class="pgn"><b>‹</b><b class="on">۱</b><b>›</b></span></div></div>`};
+const S={
+'تنظیمات پیشگیری':{c:['نام قانون','نوع تشخیص','آستانه','اقدام','وضعیت'],r:'خستگی راننده|هوش مصنوعی|۳ ثانیه|ثبت کلیپ + اعلان|فعال\nاستفاده از تلفن همراه|هوش مصنوعی|۲ ثانیه|ثبت کلیپ + اعلان|فعال\nفاصله ناایمن با جلو|هوش مصنوعی|۱.۵ ثانیه|اعلان صوتی|فعال\nتغییر خط بدون راهنما|هوش مصنوعی|—|ثبت عکس|غیرفعال\nسرعت غیرمجاز|سنسور GPS|۹۰ کیلومتر بر ساعت|اعلان + پیامک|فعال'},
+'ناوگان':{f:['نام ناوگان'],c:['نام ناوگان','ناوگان والد','تعداد خودرو','مسئول','وضعیت'],r:'شرکت حمل‌ونقل آرمان|—|۶|مهدی صادقی|فعال\nناوگان آزمایشی|شرکت حمل‌ونقل آرمان|۳|مهدی صادقی|فعال\nناوگان مرکزی|شرکت حمل‌ونقل آرمان|۳|رضا نوری|فعال'},
+'خودرو':{f:['ناوگان','وضعیت'],c:['شناسه','نام خودرو','ناوگان','مدل دستگاه','کانال‌ها','سیم‌کارت','وضعیت'],r:'102|T102|ناوگان مرکزی|DVR-8CH|۲|۰۹۱۲۱۱۱۲۲۳۳|آنلاین\n106|T106|ناوگان آزمایشی|DVR-8CH|۲|۰۹۱۲۱۱۱۲۲۴۴|آنلاین\n108|T108|ناوگان مرکزی|DVR-4CH|۲|۰۹۱۲۱۱۱۲۲۵۵|آفلاین'},
+'نقش':{f:['نام نقش'],c:['نام نقش','توضیحات','تعداد کاربر','سطح دسترسی','وضعیت'],r:'مدیر سیستم|دسترسی کامل به همه بخش‌ها|۱|کامل|فعال\nمدیر ناوگان|مدیریت خودروها و رانندگان|۲|مدیریتی|فعال\nاپراتور پایش|مشاهدهٔ پایش و هشدارها|۴|مشاهده|فعال\nمشاهده‌گر گزارش|فقط گزارش‌ها|۳|مشاهده|غیرفعال'},
+'کاربر':{f:['نقش','ناوگان'],c:['نام کاربری','نام و نام‌خانوادگی','نقش','ناوگان','آخرین ورود','وضعیت'],r:'admin|مهدی صادقی|مدیر سیستم|همه|۱۴۰۴/۰۶/۲۵ ۱۳:۰۵|فعال\nrnouri|رضا نوری|مدیر ناوگان|ناوگان مرکزی|۱۴۰۴/۰۶/۲۴ ۰۹:۱۲|فعال\nop1|سارا محمدی|اپراتور پایش|همه|۱۴۰۴/۰۶/۲۵ ۰۸:۳۰|فعال\nrep1|نادر کریمی|مشاهده‌گر گزارش|ناوگان آزمایشی|۱۴۰۴/۰۶/۱۰ ۱۱:۴۰|غیرفعال'},
+'راننده':{f:['ناوگان'],c:['نام راننده','کد پرسنلی','شماره تماس','گواهینامه تا','خودرو','وضعیت'],r:'علی رضایی|۱۰۲۴|۰۹۱۲۳۴۵۶۷۸۹|۱۴۰۶/۰۳/۱۵|102|فعال\nمحمد کریمی|۱۰۳۱|۰۹۱۲۳۴۵۶۷۹۰|۱۴۰۵/۱۱/۰۲|106|فعال\nحسین احمدی|۱۰۴۸|۰۹۱۲۳۴۵۶۷۹۱|۱۴۰۴/۰۸/۲۰|108|نزدیک موعد'},
+'پیوند هشدار':{c:['نوع هشدار','اقدام پیوندی','کانال','مدت ضبط','وضعیت'],r:'خستگی راننده|ثبت کلیپ|عقب و جلو|۱۵ ثانیه|فعال\nاستفاده از تلفن همراه|ثبت کلیپ + عکس|جلو|۱۰ ثانیه|فعال\nسرعت غیرمجاز|ثبت عکس|جلو|—|فعال\nخروج از محدوده|اعلان|—|—|غیرفعال'},
+'هشدار مجازی':{c:['نام هشدار','شرط','خودرو','شدت','وضعیت'],r:'توقف طولانی|توقف بیش از ۳۰ دقیقه|همه|مهم|فعال\nسرعت بالا در شهر|سرعت بیش از ۶۰ در محدودهٔ شهری|102|مهم|فعال\nروشن ماندن موتور|سوئیچ روشن و سرعت صفر بیش از ۱۰ دقیقه|106|عادی|فعال'},
+'دانلود زمان‌بندی‌شده':{c:['عنوان','خودرو','کانال','زمان‌بندی','آخرین اجرا','وضعیت'],r:'دانلود روزانه ۱۰۲|102|جلو و عقب|هر روز ۰۲:۰۰|۱۴۰۴/۰۶/۲۵ ۰۲:۰۰|موفق\nدانلود هفتگی ۱۰۶|106|همه|جمعه ۰۱:۰۰|۱۴۰۴/۰۶/۲۳ ۰۱:۰۰|موفق\nدانلود هشدارها|همه|هشدار|هر ۶ ساعت|۱۴۰۴/۰۶/۲۵ ۱۲:۰۰|در حال انجام'},
+'نشست مأموریت':{f:['خودرو','وضعیت'],c:['عنوان مأموریت','راننده','خودرو','مبدأ','مقصد','شروع','وضعیت'],r:'حمل بار تهران–قم|علی رضایی|102|تهران|قم|۱۴۰۴/۰۶/۲۵ ۰۷:۳۰|در حال انجام\nحمل بار کرج–قزوین|محمد کریمی|106|کرج|قزوین|۱۴۰۴/۰۶/۲۴ ۰۶:۰۰|انجام‌شده\nحمل بار ورامین–ساوه|حسین احمدی|108|ورامین|ساوه|۱۴۰۴/۰۶/۲۳ ۰۸:۱۵|انجام‌شده'},
+'قوانین آنالوگ':{c:['کانال آنالوگ','نام سنسور','واحد','حداقل','حداکثر','وضعیت'],r:'AI-1|دمای موتور|°C|۶۰|۱۰۵|فعال\nAI-2|ولتاژ باتری|ولت|۱۱|۱۵|فعال\nAI-3|سطح سوخت|درصد|۱۰|۱۰۰|فعال'},
+'قوانین جریان ویدئو':{c:['نام قانون','خودرو','کانال','کیفیت','حداکثر زمان پخش','وضعیت'],r:'پخش جلو|102|جلو|جریان اصلی|بدون محدودیت|فعال\nپخش عقب|102|عقب|جریان فرعی|۳۰ دقیقه|فعال\nپخش داخلی|106|کانال ۲|جریان فرعی|۱۵ دقیقه|غیرفعال'},
+'قوانین ارسال زمان‌بندی‌شده گزارش':{c:['گزارش','دوره ارسال','زمان ارسال','گیرندگان','قالب','وضعیت'],r:'گزارش GPS|روزانه|۰۶:۰۰|admin، rnouri|Excel|فعال\nگزارش هشدار عادی|هفتگی|شنبه ۰۷:۰۰|rnouri|PDF|فعال\nتوزیع هشدار|ماهانه|اول ماه ۰۸:۰۰|admin|PDF|غیرفعال'},
+'مدیریت فایل‌های صوتی':{c:['نام فایل','نوع','مدت','حجم','تاریخ بارگذاری','وضعیت'],r:'هشدار خستگی.wav|اعلان صوتی|۰۰:۰۴|۱۲۰ کیلوبایت|۱۴۰۴/۰۵/۱۰|فعال\nتوجه به جلو.wav|اعلان صوتی|۰۰:۰۳|۹۰ کیلوبایت|۱۴۰۴/۰۵/۱۰|فعال\nسرعت مجاز.wav|اعلان صوتی|۰۰:۰۵|۱۴۰ کیلوبایت|۱۴۰۴/۰۵/۲۲|فعال'},
+'نگهداری خودرو':{f:['خودرو','نوع سرویس'],c:['خودرو','نوع سرویس','آخرین سرویس','کیلومتر فعلی','موعد بعدی','وضعیت'],r:'102|تعویض روغن|۱۴۰۴/۰۴/۱۰|۸۴٬۲۰۰|۹۰٬۰۰۰ کیلومتر|عادی\n106|لنت ترمز|۱۴۰۴/۰۳/۰۱|۶۱٬۸۰۰|۶۲٬۰۰۰ کیلومتر|نزدیک موعد\n108|بیمه شخص ثالث|۱۴۰۳/۰۶/۳۰|۱۲۰٬۴۰۰|۱۴۰۴/۰۶/۳۰|معوق'},
+'گزارش GPS':{f:['خودرو','بازه زمانی'],b:['خروجی اکسل','چاپ'],k:[['مسافت کل','۳۸۴ کیلومتر'],['مدت حرکت','۷ ساعت و ۱۵ دقیقه'],['مدت توقف','۲ ساعت و ۴۰ دقیقه'],['بیشترین سرعت','۹۲ کیلومتر بر ساعت']],c:['خودرو','ناوگان','مسافت (کیلومتر)','مدت حرکت','مدت توقف','بیشترین سرعت'],a:0,r:'102|ناوگان مرکزی|۱۴۲|۳:۰۵|۱:۱۰|۹۲\n106|ناوگان آزمایشی|۱۹۸|۳:۴۰|۰:۵۵|۸۸\n108|ناوگان مرکزی|۴۴|۰:۳۰|۰:۳۵|۶۱'},
+'سوابق GPS':{f:['خودرو','بازه زمانی'],b:['خروجی اکسل'],c:['زمان','طول جغرافیایی','عرض جغرافیایی','سرعت','جهت','سوئیچ'],a:0,r:'۱۴۰۴/۰۶/۲۵ ۱۳:۴۵:۲۱|۵۱.۳۸۹۰|۳۵.۶۸۹۲|۰ کیلومتر بر ساعت|۱۲۰°|روشن\n۱۴۰۴/۰۶/۲۵ ۱۳:۴۴:۲۱|۵۱.۳۸۸۴|۳۵.۶۸۹۸|۲۴ کیلومتر بر ساعت|۱۱۵°|روشن\n۱۴۰۴/۰۶/۲۵ ۱۳:۴۳:۲۱|۵۱.۳۷۶۲|۳۵.۶۹۴۱|۵۲ کیلومتر بر ساعت|۱۱۰°|روشن\n۱۴۰۴/۰۶/۲۵ ۱۳:۴۲:۲۱|۵۱.۳۵۱۰|۳۵.۷۰۲۵|۶۸ کیلومتر بر ساعت|۱۰۸°|روشن'},
+'گزارش هشدار عادی':{f:['خودرو','بازه زمانی','نوع هشدار'],b:['خروجی اکسل','چاپ'],k:[['کل هشدارها','۴'],['بیشترین نوع','خروج از محدوده'],['خودروی پرهشدار','102']],c:['خودرو','نوع هشدار','تعداد','آخرین وقوع'],a:0,r:'102|خروج از محدوده|۲|۱۴۰۴/۰۶/۲۵ ۱۱:۲۰\n106|روشن ماندن موتور|۱|۱۴۰۴/۰۶/۲۴ ۱۶:۰۵\n108|توقف طولانی|۱|۱۴۰۴/۰۶/۲۳ ۱۸:۳۰'},
+'سوابق هشدار':{f:['خودرو','بازه زمانی','شدت'],b:['خروجی اکسل'],c:['زمان','خودرو','نوع هشدار','شدت','راننده','وضعیت'],a:0,r:'۱۴۰۴/۰۶/۲۵ ۱۱:۲۰:۳۹|102|خستگی راننده|بحرانی|علی رضایی|تأییدشده\n۱۴۰۴/۰۶/۲۵ ۰۹:۴۰:۱۲|106|استفاده از تلفن همراه|مهم|محمد کریمی|تأییدشده\n۱۴۰۴/۰۶/۲۴ ۱۶:۰۵:۴۴|106|روشن ماندن موتور|عادی|محمد کریمی|فعال\n۱۴۰۴/۰۶/۲۳ ۱۸:۳۰:۰۱|108|توقف طولانی|مهم|حسین احمدی|فعال'}
+};
+const FM=(s,rows)=>`<div class="pg">${hd(s)}<div class="card" style="padding:6px 16px;max-width:620px">${rows.map(r=>`<div class="fr"><span>${r[0]}</span><span class="f">${r[1]}</span></div>`).join('')}<div style="padding:12px 0"><button class="btn">ذخیره تنظیمات</button></div></div></div>`;
+const IC=['خستگی راننده','تلفن همراه','فاصله ناایمن','خروج از محدوده'];
+const CU={
+'کلیپ‌های هشدار':()=>`<div class="pg">${hd('کلیپ‌های هشدار')}${fl(['خودرو','نوع هشدار','بازه زمانی'],['خروجی اکسل'])}<div class="cards">${[0,1,2,3,4,5].map(i=>`<div class="t"><img src="${IM[i]}"><p><span>${V[i%3][0]} · ${IC[i%4]}</span></p><p style="color:var(--m);font-size:12px"><span>۱۴۰۴/۰۶/۲۵ ۱${i}:۲۰:۳۹</span><span>▶ ۱۵ ثانیه</span></p></div>`).join('')}</div></div>`,
+'ویدئوی تاریخی':()=>`<div class="pg">${hd('ویدئوی تاریخی')}${fl(['خودرو','کانال','تاریخ'],['دانلود'])}<div class="sd" style="display:flex;gap:8px"><div class="card" style="flex:1;padding:8px"><img src="${IM[0]}" style="width:100%;max-height:330px;object-fit:cover;border-radius:3px"><div class="tl"><i style="right:8%;width:22%"></i><i style="right:42%;width:30%"></i><i style="right:80%;width:12%"></i></div><div style="display:flex;justify-content:space-between;color:var(--m);font-size:11px"><span>۲۴:۰۰</span><span>۱۸:۰۰</span><span>۱۲:۰۰</span><span>۰۶:۰۰</span><span>۰۰:۰۰</span></div><div style="display:flex;gap:14px;padding-top:8px;font-size:16px"><span>⏮</span><span>▶</span><span>⏭</span><span>🔊</span><span style="margin-inline-start:auto;font-size:13px">سرعت ۱×</span></div></div><div class="card" style="width:240px;padding:10px"><b>کانال‌ها</b><p>☑ 102 [جلو]<br>☑ 102 [عقب]</p><b>رویدادهای روز</b><p style="color:var(--m)">۰۹:۴۰ استفاده از تلفن<br>۱۱:۲۰ خستگی راننده</p></div></div></div>`,
+'مسیر':()=>{const rt=[[51.39,35.69],[51.0,35.83],[50.5,36.05],[50.0,36.27]],[a,b]=P(...rt[0]),[c,d]=P(...rt[3]);const ex=`<polyline points="${pts(rt)}" fill="none" stroke="#0fa89a" stroke-width="5" stroke-linecap="round"/><circle cx="${a}" cy="${b}" r="8" fill="#1fa25a" stroke="#fff" stroke-width="3"/><circle cx="${c}" cy="${d}" r="8" fill="#e03131" stroke="#fff" stroke-width="3"/>`;return `<div class="pg">${hd('مسیر')}${fl(['خودرو','تاریخ'],['پخش مسیر'])}<div class="sd" style="display:flex;gap:8px;flex:1;min-height:340px"><div class="card map" style="flex:1">${MAP(ex,'route')}</div><div class="card" style="width:240px;padding:12px"><b>خلاصه مسیر ۱۰۲</b><p>مبدأ: تهران<br>مقصد: قزوین<br>مسافت: ۱۴۲ کیلومتر<br>مدت: ۲ ساعت و ۱۰ دقیقه<br>بیشترین سرعت: ۹۲ کیلومتر بر ساعت<br>تعداد توقف: ۳</p></div></div></div>`},
+'سفر':()=>`<div class="pg">${hd('سفر')}${fl(['خودرو','بازه زمانی'],['خروجی اکسل'])}${TB(['خودرو','شروع','پایان','مسافت','مدت','بیشترین سرعت','توقف‌ها'],'102|۱۴۰۴/۰۶/۲۵ ۰۷:۳۰|۱۴۰۴/۰۶/۲۵ ۱۰:۴۰|۱۴۲ کیلومتر|۳:۱۰|۹۲|۳\n106|۱۴۰۴/۰۶/۲۴ ۰۶:۰۰|۱۴۰۴/۰۶/۲۴ ۰۹:۴۵|۱۹۸ کیلومتر|۳:۴۵|۸۸|۲\n108|۱۴۰۴/۰۶/۲۳ ۰۸:۱۵|۱۴۰۴/۰۶/۲۳ ۰۹:۱۵|۴۴ کیلومتر|۱:۰۰|۶۱|۱',0)}</div>`,
+'محدوده جغرافیایی':()=>{const [x,y]=P(51.39,35.69),ex=`<circle cx="${x}" cy="${y}" r="48" fill="#0fa89a44" stroke="#0fa89a" stroke-width="2.5"/><polygon points="${pts([[50.6,34.95],[51.15,34.95],[51.15,34.35],[50.6,34.35]])}" fill="#e8832a44" stroke="#e8832a" stroke-width="2.5"/>`;return `<div class="pg">${hd('محدوده جغرافیایی')}${fl(['نام محدوده'])}<div class="sd" style="display:flex;gap:8px;flex:1;min-height:340px"><div style="width:420px">${TB(['نام','نوع','خودروها','هشدار'],'محدودهٔ تهران|دایره‌ای|۳|ورود و خروج\nمحدودهٔ قم|چندضلعی|۲|خروج')}</div><div class="card map" style="flex:1">${MAP(ex,'geo')}</div></div></div>`},
+'توزیع هشدار':()=>{const D=[['خستگی راننده',42],['تلفن همراه',28],['تغییر خط',19],['فاصله ناایمن',14],['سرعت غیرمجاز',11],['خروج از محدوده',6]];return `<div class="pg">${hd('توزیع هشدار')}${fl(['خودرو','بازه زمانی'],['خروجی اکسل'])}<div class="card" style="padding:16px">${D.map(d=>`<div style="display:flex;align-items:center;gap:10px;margin:8px 0"><span style="width:120px">${d[0]}</span><div class="hb" style="width:${d[1]*1.6}%;background:#0fa89a;margin:0"></div><b>${d[1]}</b></div>`).join('')}</div></div>`},
+'تنظیمات نگهداری':()=>FM('تنظیمات نگهداری',[['واحد مسافت','کیلومتر'],['هشدار قبل از موعد سرویس','۵۰۰ کیلومتر'],['هشدار قبل از انقضای بیمه','۳۰ روز'],['هشدار قبل از انقضای گواهینامه','۶۰ روز'],['اعلان به','کاربران ناوگان']])
+};
+const FMr=0;
+
+let MQ=[];
+function MAP(ex='',kind='live'){
+ if(typeof L==='undefined')return MAPS(ex);
+ const id='lm'+Math.random().toString(36).slice(2,7);MQ.push([id,kind]);
+ return `<div id="${id}" class="lm"></div><div class="q">جستجوی آدرس مورد نظر را وارد کنید...</div>`}
+function initMaps(){MQ.forEach(([id,k])=>{
+ const m=L.map(id,{center:[35.7,51.0],zoom:8});let er=0;
+const TL=[['نقشه خیابانی (Esri)','https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'}],['OpenStreetMap فرانسه','https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',{maxZoom:19,subdomains:'abc',attribution:'© OpenStreetMap'}],['توپوگرافی','https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',{maxZoom:17,subdomains:'abc',attribution:'© OpenStreetMap, OpenTopoMap'}],['ماهواره‌ای (Esri)','https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'}]].map(a=>[a[0],L.tileLayer(a[1],a[2])]);
+ let ci=0;er=0;const bs={};TL.forEach(a=>bs[a[0]]=a[1]);TL[0][1].addTo(m);L.control.layers(bs,null,{position:'topleft'}).addTo(m);
+ m.on('baselayerchange',e=>{ci=TL.findIndex(a=>a[1]==e.layer);er=0});
+ TL.slice(0,3).forEach((a,i)=>a[1].on('tileerror',()=>{if(ci!=i)return;if(++er>=4){er=0;if(i<2){m.removeLayer(a[1]);ci=i+1;TL[ci][1].addTo(m)}else document.getElementById(id).insertAdjacentHTML('beforeend','<div class="mn">بارگذاری نقشه ممکن نشد؛ اتصال اینترنت را بررسی کنید یا لایهٔ دیگری را از منوی بالا-چپ انتخاب کنید.</div>')}}));
+ CITY.forEach(([n,o,a])=>L.circleMarker([a,o],{radius:3,color:'#333',weight:1,fillOpacity:1}).addTo(m).bindTooltip(n,{permanent:true,direction:'bottom',className:'ct',offset:[0,2]}));
+ if(0)VEH.forEach(([n,o,a,on])=>L.marker([a,o],{icon:L.divIcon({className:'',html:`<div class="vm ${on?'':'off'}">${n}</div>`,iconSize:[44,22],iconAnchor:[22,30]})}).addTo(m).bindPopup('خودرو '+n+(on?' — آنلاین':' — آفلاین')));
+ if(k=='route'){const r=[[35.69,51.39],[35.83,51.0],[36.27,50.0]],pl=L.polyline(r,{color:'#0fa89a',weight:5}).addTo(m);
+  L.circleMarker(r[0],{radius:8,color:'#fff',fillColor:'#1fa25a',fillOpacity:1}).addTo(m);L.circleMarker(r[2],{radius:8,color:'#fff',fillColor:'#e03131',fillOpacity:1}).addTo(m);m.fitBounds(pl.getBounds(),{padding:[30,30]});
+  fetch('https://router.project-osrm.org/route/v1/driving/51.39,35.69;51.0,35.83;50.0,36.27?overview=full&geometries=geojson').then(x=>x.json()).then(j=>{pl.setLatLngs(j.routes[0].geometry.coordinates.map(p=>[p[1],p[0]]));m.fitBounds(pl.getBounds(),{padding:[30,30]})}).catch(()=>{})}
+ if(0){L.circle([35.69,51.39],{radius:12000,color:'#0fa89a'}).addTo(m);L.polygon([[34.95,50.6],[34.95,51.15],[34.35,51.15],[34.35,50.6]],{color:'#e8832a'}).addTo(m)}
+ LM.push([m,k]);setTimeout(()=>m.invalidateSize(),60)});MQ=[]}
+const STT=['وضعیت','رویداد','هشدار عادی','هشدار هوش مصنوعی','راننده'];
+const STD=[0,[['زمان','خودرو','رویداد'],[['۱۳:۴۵:۲۱','102','روشن شدن سوئیچ'],['۱۳:۳۰:۰۲','106','خاموش شدن سوئیچ'],['۱۳:۱۱:۴۰','108','قطع ارتباط']]],[['زمان','خودرو','نوع هشدار','شدت'],[['۱۱:۲۰:۳۹','102','خروج از محدوده','عادی'],['۰۹:۴۰:۱۲','106','روشن ماندن موتور','عادی']]],[['زمان','خودرو','نوع هشدار','راننده'],[['۱۱:۲۰:۳۹','102','خستگی راننده','علی رضایی'],['۰۹:۴۰:۱۲','106','استفاده از تلفن همراه','محمد کریمی']]],[['زمان','خودرو','راننده','رویداد'],[['۰۷:۲۸:۱۰','102','علی رضایی','ورود راننده'],['۰۶:۰۰:۰۵','106','محمد کریمی','ورود راننده']]]];
+function stc(i){if(!i)return `<table><tr><th>نام دستگاه (شناسه)</th><th>ناوگان</th><th>زمان</th><th>وضعیت سوئیچ</th><th>شبکه</th></tr>${V.map(v=>`<tr><td><span class="d ${v[5]?'':'g'}"></span> ${v[0]} (T${v[0]})</td><td>${v[1]}</td><td>${v[2]}</td><td>${v[3]}</td><td>${v[4]}</td></tr>`).join('')}</table>`;const d=STD[i];return `<table><tr>${d[0].map(x=>`<th>${x}</th>`).join('')}</tr>${d[1].map(r=>`<tr>${r.map(c=>`<td>${cell(c)}</td>`).join('')}</tr>`).join('')}</table>`}
+function stab(i){document.querySelectorAll('#stt span').forEach((e,j)=>e.classList.toggle('on',j==i));st.innerHTML=stc(i)}
+function msr(q){q=q.trim();const o=[];if(q)NAV.forEach(n=>n[1].forEach(s=>{if(s.includes(q)||n[0].includes(q))o.push([n[0],s])}));mr.style.display=o.length?'block':'none';mr.innerHTML=o.slice(0,8).map(x=>`<div onclick="go('${x[0]}','${x[1]}');ms.value='';mr.style.display='none'">${x[1]} <small style="color:#8fa3bb">· ${x[0]}</small></div>`).join('')}
+function logout(){app.style.display='none';login.style.display='flex'}
+document.addEventListener('click',e=>{if(!e.target.closest('#sw'))mr.style.display='none';const i=e.target.closest('.t img');if(i){lbi.src=i.src;lbc.textContent=i.closest('.t').querySelector('p').textContent;lb.style.display='flex'}else if(e.target.closest('#lb'))lb.style.display='none'});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')lb.style.display='none'});
+
+let tree=()=>`<div class="card tree"><div class="s">جستجوی وسیله نقلیه...</div><div class="r">☆ علاقه‌مندی‌ها (۰)</div><div class="r">▾ شرکت حمل‌ونقل آرمان (۶|۳|۱)</div><div class="r i1">▸ ناوگان آزمایشی (۳|۰|۰)</div><div class="r i1">▾ ناوگان مرکزی (۳|۳|۱)</div>${V.map((v,i)=>`<div class="r i2 ${i==0?'a':''}" onclick="document.querySelectorAll('.tree .r').forEach(e=>e.classList.remove('a'));this.classList.add('a')"><span class="d ${v[5]?'':'g'}"></span>${v[0]} <small id="ts${v[0]}" style="color:var(--m)"></small><span class="ic"><button title="دوربین" onclick="go('پایش لحظه‌ای','پایش ویدئو')">📷</button><button title="موقعیت" onclick="go('پایش لحظه‌ای','موقعیت لحظه‌ای')">📍</button></span></div>`).join('')}</div>`;
+const stat=()=>`<div class="card"><div class="tabs" id="stt">${STT.map((t,i)=>`<span class="${i?'':'on'}" onclick="stab(${i})" style="cursor:pointer">${t}</span>`).join('')}</div><div id="st">${stc(0)}</div></div>`;
+const tile=(i,n,red)=>`<div class="t ${red?'red':''}">${i<6?`<img src="${IM[i]}">`:'<div class="nv">بدون تصویر</div>'}<p><span>${n}</span><span class="d"></span></p>${i<6?`<div class="ov" id="ov${i}"></div>`:''}</div>`;
+function go(g,s){document.body.classList.remove('nv');cur=[g,s];navr();document.querySelectorAll('.ni').forEach(e=>e.classList.remove('open'));let h='';
+if(s=='موقعیت لحظه‌ای')h=tree()+`<div class="col"><div class="card map">${MAP()}</div>${stat()}</div>`;
+else if(s=='پایش ویدئو')h=tree()+`<div class="col"><div class="card ctl"><div><label>نوع پایش</label><div class="f">چرخه‌ای</div></div><div><label>وضعیت سوئیچ</label><div class="f">همه وضعیت‌ها</div></div><div><label>حالت پایش</label><div class="f">توالی‌دار</div></div><div><label>کانال</label><div class="f">همه</div></div><div><label>زمان پایش (ثانیه)</label><input class="f" type="number" value="60" style="width:80px"></div><div><label>محدودیت داده</label><div class="f">بدون محدودیت</div></div><button class="stop" onclick="plt(this)">توقف</button></div><div class="card wall">${tile(0,'102 [جلو]',1)}${tile(1,'102 [عقب]',1)}${tile(2,'۱۰۶ [کانال ۱]')}${tile(3,'۱۰۶ [کانال ۲]')}${tile(4,'108 [جلو]')}${tile(5,'108 [عقب]')}${tile(6,'سایر کانال‌ها')}${tile(7,'کانال‌های اضافی')}</div>${stat()}</div>`;
+else if(s=='نمای کلی')h=`<div class="pg"><div class="card ctl"><button class="btn">امروز</button><span class="f">دیروز</span><span class="f">۷ روز گذشته</span><span class="f">۳۰ روز گذشته</span><span class="f">انتخاب ناوگان</span><button class="btn">اعمال</button></div><div class="kp"><div class="k" style="background:#8bb722">۶<small>جمع کل</small></div><div class="k" style="background:#2f9ae8">۳<small>آنلاین</small></div><div class="k" style="background:#ee5a54">۰<small>خراب</small></div><div class="k" style="background:#f6b02c">۱<small>بدون ارتباط طولانی</small></div></div><div class="g"><div class="card"><b>وضعیت حرکت خودروها</b><p>در حال حرکت: ۱ · پارکینگ: ۲ · بدون موقعیت: ۰</p></div><div class="card"><b>هشدار خودروها</b><div class="hb" style="width:90%;background:#f28b8b"></div><div class="hb" style="width:25%;background:#f5c26b"></div><div class="hb" style="width:6%;background:#7bc67e"></div></div><div class="card"><b>رفتار راننده</b><p style="color:var(--m)">اطلاعاتی برای نمایش وجود ندارد</p></div></div><div class="g"><div class="card" style="grid-column:span 2"><b>توزیع هشدارها</b><p style="color:var(--m)">داده‌ای برای نمایش وجود ندارد</p></div><div class="card"><b>مصرف داده</b><p>کل: ۲۴.۵ گیگابایت · امروز: ۱.۲ گیگابایت</p></div></div></div>`;
+else if(CU[s])h=CU[s]();else if(S[s])h=`<div class="pg">${hd(s)}${K(S[s].k)}${fl(S[s].f,S[s].b)}${TB(S[s].c,S[s].r,S[s].a)}</div>`;
+mn.innerHTML=h;initMaps()}
+/*__LIVE__*/
+</script></body></html>
